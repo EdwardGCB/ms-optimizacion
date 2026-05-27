@@ -1,0 +1,10 @@
+**/__pycache__/*
+.env
+.scannerwork
+.vscode
+celerybeat-schedule
+docker/local
+flake8_autofix.py
+.venv/
+
+**sonar-project-local.properties**

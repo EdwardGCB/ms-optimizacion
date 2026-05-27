@@ -1,0 +1,28 @@
+image: atlassian/default-image:3
+
+pipelines:
+  branches:
+    main:
+      - step:
+          name: Ruff Lint
+          image: python:3.11
+          script:
+            - pip install ruff
+            - ruff check .
+
+      - step:
+          name: Deploy ms-products
+          deployment: production
+          script:
+            - apt-get update && apt-get install -y openssh-client
+            - mkdir -p ~/.ssh
+            - echo "$SSH_KEY_B64" | base64 -d > ~/.ssh/id_ed25519
+            - chmod 600 ~/.ssh/id_ed25519
+            - ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+            - ssh -i ~/.ssh/id_ed25519 root@$SERVER_IP "
+                cd /root/ms-products &&
+                git fetch origin &&
+                git reset --hard origin/main &&
+                cd /root/proxy-configuration &&
+                docker compose up -d --build products-service
+              "

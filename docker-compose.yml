@@ -1,0 +1,25 @@
+services:
+  ms-products:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: ms-products
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - APP_ENV=${APP_ENV:-production}
+      - DEBUG=${DEBUG:-false}
+      - TIMEZONE=${TIMEZONE:-UTC}
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_DB=${MONGO_DB}
+      - MONGO_URI_TEST=${MONGO_URI_TEST:-mongodb://localhost:27017}
+      - MONGO_DB_TEST=${MONGO_DB_TEST:-ms_products_test}
+    env_file:
+      - .env
+    networks:
+      - ms-products-network
+
+networks:
+  ms-products-network:
+    driver: bridge

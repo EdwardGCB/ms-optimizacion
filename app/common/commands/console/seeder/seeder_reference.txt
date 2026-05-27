@@ -1,0 +1,11 @@
+from app.common.querysets.__seedername___queryset import __queryset__QuerySet
+
+
+class __classname__Seed:
+
+    def __init__(self):
+        self.__queryset = __queryset__QuerySet()
+
+    def run(self):
+        json_string = '{}'
+        self.__queryset.save_from_json(json_string)
