@@ -8,8 +8,8 @@ class OptimizationHandler:
         return await OptimizationProcess().create(payload)
 
     @staticmethod
-    async def list():
-        return await OptimizationProcess().list()
+    async def list(page: int=1, limit: int=10):
+        return await OptimizationProcess().list(page, limit)
 
     @staticmethod
     async def get(optimization_type: TypeOptimizationEnum, process_uuid: str):

@@ -7,6 +7,7 @@ from app.common.models.optimization import OptimizationModel
 from app.common.enums.optimization_enum import TypeOptimizationEnum
 from app.api.core.service_orchestrator.solvers.two_steps_solver import solve_two_steps
 from app.api.core.service_orchestrator.solvers.graphical_solver import solve_graphical
+import math
 
 
 class OptimizationProcess:
@@ -31,7 +32,7 @@ class OptimizationProcess:
 
         doc = OptimizationModel(
             payload=payload.model_dump(mode="json"),
-            result=result,
+            result=result,  
             type_optimization=payload.type_optimization.value,
             created_at=datetime.utcnow(),
         )
@@ -102,9 +103,23 @@ class OptimizationProcess:
     # -------------------------
     # List
     # -------------------------
-    async def list(self):
-        docs = await OptimizationModel.find_all().to_list()
-        return [d.model_dump(mode="json") for d in docs]
+    async def list(self, page: int=1, limit: int=10):
+        skip = (page - 1) * limit
+        docs = await (
+            OptimizationModel.find_all()
+            .sort("-created_at")
+            .skip(skip)
+            .limit(limit)
+            .to_list()
+        )
+        total = await OptimizationModel.find_all().count()
+        total_pages = math.ceil(total / limit) if limit else 0
+
+        return {
+            "items": [d.model_dump(mode="json") for d in docs],
+            "total_items": total,
+            "total_pages": total_pages,
+        }
 
     # -------------------------
     # Helpers

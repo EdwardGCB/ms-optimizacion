@@ -2,7 +2,7 @@
 Simplex & Two Phase views
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from app.api.api_responser import ApiResponser
 from app.api.v1.schema import ErrorResponse, SuccessResponse
@@ -33,8 +33,11 @@ async def create_optimization(payload: CreateOptimizationRequest):
 
 
 @router.get("/", responses=responses)
-async def list_optimizations():
-    response = await OptimizationHandler.list()
+async def list_optimizations(
+        page: int = Query(1, ge=1),
+        limit: int = Query(10, ge=1, le=100),
+):
+    response = await OptimizationHandler.list(page, limit)
     return ApiResponser.success(response)
 
 
